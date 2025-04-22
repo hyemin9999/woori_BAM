@@ -32,6 +32,7 @@ public class Main {
 
 		sc.close(); // 안닫으면 쓰레기값이 됨 그걸 처리해주는게 "GC : 가비지 콜렉터"
 
+		//git commit 테스트용
 	}
 
 }

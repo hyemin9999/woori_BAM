@@ -1,38 +1,71 @@
+
 package com.woori.BAM;
 
-import java.util.Scanner; //표준라이러리에서 import
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
-	// 전역(Global)변수/지역(Local)변수
+
 	public static void main(String[] args) {
+		// 게시글 배열 변수 선언
+		ArrayList<ArticleList> aList = new ArrayList<>();
+		int index = 0;
 		System.out.println("== 프로그램 시작 ==");
+		System.out.println("명령어 종류) article list, article write : 게시글 작성, exit : 종료");
 
-		// System : class, in : 변수,필드(field), final static : 상수
-		// Scanner(System.in) : 생성자
-		Scanner sc = new Scanner(System.in); // while문 위로 옮겨서 자원낭비를 줄임 = 최적화, 리팩토링
-
+		Scanner sc = new Scanner(System.in);
 		while (true) {
-			System.out.printf("cmd) ");
-			// sc.next() String값을 반환하는 메서드
-//			System.out.println(sc.next());
+			System.out.printf("명령어) ");
+			String cmd = sc.nextLine().trim();
 
-			String cmd = sc.nextLine(); // cmd 변수 == > 재사용 하기 위해
-			// . : 멤버접근 연산자
-			System.out.println("명령어) " + cmd);
-			// 무한반복 구간을 나가기 위한 조건문과 break를 사용
-			// 종료값을 입력받으면
-			if (cmd.equals("exit")) {// .eauals는 참조형 객체의 값이 같은지 확인할수있다
-				break;
+			if (cmd.equals("exit")) {
+				break; // while문 빠져나감
 			}
+
+			// 아무것도 입력 안했을때를 의미
+			if (cmd.replace("	", "").replace(" ", "").length() == 0) {
+				System.out.println("명령어를 입력해 주세요");
+				continue;// 현재단계 중단 및 while문 처음부터 시작
+			}
+
+			if (cmd.equals("article list")) {// 게시글 목록
+				if (aList.size() == 0) { // 게시글 목록이 없을때를 의미
+					System.out.println("게시글이 없습니다.");
+				} else {
+					System.out.printf("%d개의 게시글이 있습니다.\n", aList.size());
+				}
+
+			} else if (cmd.equals("article write")) { // 글 생성
+				System.out.printf("제목 : ");
+				String title = sc.nextLine();
+				System.out.printf("내용 : ");
+				String body = sc.nextLine();
+
+				ArticleList aitem = new ArticleList();
+
+				aitem.index = ++index;
+				aitem.title = title;
+				aitem.body = body;
+
+				aList.add(aitem);
+
+				System.out.printf("%d번글이 생성되었습니다.\n", index);
+
+			} else { // 아무거나 입력했을때를 의미
+				System.out.println("존재하지 않는 명령어 입니다.");
+			}
+
 		}
-
-		// 종료버튼을 누를때 종료되도록 하려면
-		// 종료버튼을 누르기전까지 무한반복을 돌린다
 		System.out.println("== 프로그램 종료 ==");
+		sc.close();
 
-		sc.close(); // 안닫으면 쓰레기값이 됨 그걸 처리해주는게 "GC : 가비지 콜렉터"
-
-		//git commit 테스트용
 	}
+}
 
+class ArticleList {
+	int index = 0;
+	// 제목
+	String title = null;
+	// 내용
+	String body = null;
 }

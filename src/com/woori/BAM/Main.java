@@ -10,6 +10,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		// 게시글 배열 변수 선언
+		// ArrayList 자료구조로 인덱스를 가지고 객체주는 제한이 없음.
 		List<Article> aList = new ArrayList<Article>();
 
 		int index = 0;
@@ -37,6 +38,7 @@ public class Main {
 				} else {
 					System.out.printf("%d개의 게시글이 있습니다.\n", aList.size());
 
+					// 저장된 게시글 확인
 					for (int i = 0; i < aList.size(); i++) {
 						System.out.printf("%d %s \"%s\"\n", aList.get(i).index, aList.get(i).title, aList.get(i).body);
 
@@ -82,10 +84,6 @@ class Article {
 	String title = null;
 	// 내용
 	String body = null;
-
-//	Article() {
-//
-//	}
 
 	Article(int _index, String _title, String _body) {
 		index = _index;

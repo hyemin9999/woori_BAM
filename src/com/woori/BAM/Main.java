@@ -2,13 +2,16 @@
 package com.woori.BAM;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
 	public static void main(String[] args) {
+
 		// 게시글 배열 변수 선언
-		ArrayList<ArticleList> aList = new ArrayList<>();
+		List<Article> aList = new ArrayList<Article>();
+
 		int index = 0;
 		System.out.println("== 프로그램 시작 ==");
 		System.out.println("명령어 종류) article list, article write : 게시글 작성, exit : 종료");
@@ -33,6 +36,12 @@ public class Main {
 					System.out.println("게시글이 없습니다.");
 				} else {
 					System.out.printf("%d개의 게시글이 있습니다.\n", aList.size());
+
+					for (int i = 0; i < aList.size(); i++) {
+						System.out.printf("%d %s \"%s\"\n", aList.get(i).index, aList.get(i).title, aList.get(i).body);
+
+					}
+
 				}
 
 			} else if (cmd.equals("article write")) { // 글 생성
@@ -41,13 +50,18 @@ public class Main {
 				System.out.printf("내용 : ");
 				String body = sc.nextLine();
 
-				ArticleList aitem = new ArticleList();
+				// 크기는 1 이다. 이전의 번호, 제목, 내용은 크기가 3
+//				Article aitem = new Article(++index,title,body); //새성자 오버로딩을 통해 각 값을 생성자에 넘김
+//
+//				// 최적화 작업. Article생성자 오버로딩
+////				aitem.index = ++index;
+////				aitem.title = title;
+////				aitem.body = body;
+//
+//				aList.add(aitem);
 
-				aitem.index = ++index;
-				aitem.title = title;
-				aitem.body = body;
-
-				aList.add(aitem);
+				// 최적화 2 생성과 add를 합친다 - 두줄을 한줄로 // 사용자 마음대로 2줄로 하던지 1줄로 하던지
+				aList.add(new Article(++index, title, body));
 
 				System.out.printf("%d번글이 생성되었습니다.\n", index);
 
@@ -62,10 +76,20 @@ public class Main {
 	}
 }
 
-class ArticleList {
+class Article {
 	int index = 0;
 	// 제목
 	String title = null;
 	// 내용
 	String body = null;
+
+//	Article() {
+//
+//	}
+
+	Article(int _index, String _title, String _body) {
+		index = _index;
+		title = _title;
+		body = _body;
+	}
 }

@@ -45,7 +45,7 @@ public class Main {
 		List<Article> articles = new ArrayList<Article>();
 
 		int id = 0;// 등록된 게시글 번호
-		int detailId = 0; // 상세보기 게시글 번호
+		int selectId = 0; // 상세보기 게시글 번호
 
 		ItemCheck itemChk = new ItemCheck().setItemChk(false);
 
@@ -76,7 +76,7 @@ public class Main {
 			}
 
 			if (itemChk.viewChk == false) { // 게시글 보기 상태가 아니면 게시글 index초기화
-				detailId = 0;
+				selectId = 0;
 			}
 
 			if (itemChk.listChk == true && cmd.startsWith(Commands.detail.toString())) { // 게시글 항목을 보기
@@ -88,21 +88,24 @@ public class Main {
 				getItemPrint(cmd, articles, itemChk);
 
 			} else if (itemChk.listChk == true && cmd.startsWith(Commands.edit.toString())) { // 게시글 수정
-				//지금 선택된 게시글의 번호 필요
-				detailId = getId(cmd);
+				// 지금 선택된 게시글의 번호 필요
+				selectId = getId(cmd);
 
-				// 다시 제목 내용 입력받아서
-				System.out.printf("제목 : ");
-				String title = sc.nextLine();
-				System.out.printf("내용 : ");
-				String body = sc.nextLine();
+				if (selectId != 0) {
+					// 다시 제목 내용 입력받아서
+					System.out.printf("제목 : ");
+					String title = sc.nextLine();
+					System.out.printf("내용 : ");
+					String body = sc.nextLine();
 
-				// 해당 게시글 번호 게시글에 수정하고 update날짜 현재날짜로 수정
-				Article aitem = getItem(articles, detailId - 1);
-				aitem.setArticle(title, body);
+					// 해당 게시글 번호 게시글에 수정하고 update날짜 현재날짜로 수정
+					Article aitem = articles.get(selectId - 1);
+					aitem.setArticle(title, body);
 
-				System.out.printf("%d번글이 수정되었습니다.\n", detailId);
-
+					System.out.printf("%d번글이 수정되었습니다.\n", selectId);
+				}else {
+					System.out.println(notAticleTxt);
+				}
 			} else if (cmd.equals(Commands.list.toString())) {// 게시글 목록
 				// 게시글 목록이 없을때를 먼저 체크하는게 좋다.
 				if (articles.size() == 0) { // 게시글 목록이 없을때를 의미
@@ -157,7 +160,7 @@ public class Main {
 
 		if (num <= articles.size() && num != 0) { // 존재하는 게시글 여부 확인 : 입력받은 게시글번호가 게시글 목록보다 작거나 같은지 확인
 			// article은 articles.get() 을 통해 받은 객체를 재사용하기 위해 저장 용도로 사용됨
-			Article article = getItem(articles, num - 1); // 해당 인덱스의 게시글 가져오기. 인덱스는 입력된 번호 - 1
+			Article article = articles.get(num - 1); // 해당 인덱스의 게시글 가져오기. 인덱스는 입력된 번호 - 1
 
 			if (cmd.startsWith(Commands.detail.toString())) { // 게시글 보기일때
 				System.out.printf("번호 : %d\n", article.id);
@@ -179,23 +182,13 @@ public class Main {
 	}
 
 	/**
-	 * 게시글 목록에서 id로 게시글 반환 함수
-	 * 
-	 * @param _articles = 게시글 목록
-	 * @param id        = 입력한 게시글 번호
-	 */
-	public static Article getItem(List<Article> _articles, int id) {
-
-		return _articles.get(id);
-	}
-
-	/**
 	 * 입력된 명령어에서 게시글 번호가 입력되었는지 체크후 번호 반환 반환값이 0이면 게시글이 없는것
 	 * 
 	 * @param cmd = 명령어
 	 */
 	public static int getId(String cmd) {
 		int id = 0;
+
 		if (cmd.startsWith(Commands.detail.toString())) { // 게시글 보기 (명령어 게시글 번호) 형식
 			if (isNumberic(cmd.replace(Commands.detail.toString(), "").trim())) {
 				id = Integer.parseInt(cmd.replace(Commands.detail.toString(), "").trim());

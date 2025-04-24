@@ -79,18 +79,17 @@ public class Main {
 				detailId = 0;
 			}
 
-			if (itemChk.listChk == true && cmd.contains(Commands.detail.toString())) { // 게시글 항목을 보기
-
-				detailId = getId(cmd);
-				if (detailId != 0) {
-					getItemPrint(cmd, articles, itemChk);
-				}
-
-			} else if (itemChk.listChk == true && cmd.contains(Commands.delete.toString())) { // 게시글 삭제
+			if (itemChk.listChk == true && cmd.startsWith(Commands.detail.toString())) { // 게시글 항목을 보기
 
 				getItemPrint(cmd, articles, itemChk);
 
-			} else if (itemChk.viewChk == true && cmd.contains(Commands.edit.toString())) { // 게시글 수정 지금 선택된 게시글의 번호 필요
+			} else if (itemChk.listChk == true && cmd.startsWith(Commands.delete.toString())) { // 게시글 삭제
+
+				getItemPrint(cmd, articles, itemChk);
+
+			} else if (itemChk.listChk == true && cmd.startsWith(Commands.edit.toString())) { // 게시글 수정
+				//지금 선택된 게시글의 번호 필요
+				detailId = getId(cmd);
 
 				// 다시 제목 내용 입력받아서
 				System.out.printf("제목 : ");
@@ -160,7 +159,7 @@ public class Main {
 			// article은 articles.get() 을 통해 받은 객체를 재사용하기 위해 저장 용도로 사용됨
 			Article article = getItem(articles, num - 1); // 해당 인덱스의 게시글 가져오기. 인덱스는 입력된 번호 - 1
 
-			if (cmd.contains(Commands.detail.toString())) { // 게시글 보기일때
+			if (cmd.startsWith(Commands.detail.toString())) { // 게시글 보기일때
 				System.out.printf("번호 : %d\n", article.id);
 				System.out.printf("날짜 : %s\n", article.update);
 				System.out.printf("제목 : %s\n", article.title);
@@ -168,7 +167,7 @@ public class Main {
 
 				_itemChk.setItemChk(false, true);
 
-			} else if (cmd.contains(Commands.delete.toString())) { // 게시글 삭제일때
+			} else if (cmd.startsWith(Commands.delete.toString())) { // 게시글 삭제일때
 				articles.remove(num - 1);
 
 				System.out.printf("%d번의 게시글이 삭제되었습니다.\n", num);
@@ -197,15 +196,21 @@ public class Main {
 	 */
 	public static int getId(String cmd) {
 		int id = 0;
-		if (cmd.contains(Commands.detail.toString())) { // 게시글 보기 (article view 게시글 번호) 형식
+		if (cmd.startsWith(Commands.detail.toString())) { // 게시글 보기 (명령어 게시글 번호) 형식
 			if (isNumberic(cmd.replace(Commands.detail.toString(), "").trim())) {
 				id = Integer.parseInt(cmd.replace(Commands.detail.toString(), "").trim());
 			} else { // 번호입력이 안되어있을때
 				System.out.println(notAticleIndex);
 			}
-		} else if (cmd.contains(Commands.delete.toString())) { // 게시글 삭제 (article delete 게시글 번호) 형식
+		} else if (cmd.startsWith(Commands.delete.toString())) { // 게시글 삭제 (명령어 게시글 번호) 형식
 			if (isNumberic(cmd.replace(Commands.delete.toString(), "").trim())) {
 				id = Integer.parseInt(cmd.replace(Commands.delete.toString(), "").trim());
+			} else { // 번호입력이 안되어있을때
+				System.out.println(notAticleIndex);
+			}
+		} else if (cmd.startsWith(Commands.edit.toString())) { // 게시글 수정 (명령어 게시글 번호) 형식
+			if (isNumberic(cmd.replace(Commands.edit.toString(), "").trim())) {
+				id = Integer.parseInt(cmd.replace(Commands.edit.toString(), "").trim());
 			} else { // 번호입력이 안되어있을때
 				System.out.println(notAticleIndex);
 			}
@@ -272,7 +277,10 @@ class Article {
 }
 
 /**
- * 지금 보고 있는게 무엇인지 체크해주는 객체
+ * <br>
+ * 지금 보고 있는게 무엇인지 체크해주는 객체</br>
+ * 게시글 목록에서 게시글 수정을 하도록 수정하면서 viewChk사용안됨. <br>
+ * 언젠가 사용할지도 모르니까 그냥 두겠음.</br>
  * 
  * @param listChk = '게시글 목록' 체크 여부
  * @param viewChk = '게시글 보기' 체크 여부

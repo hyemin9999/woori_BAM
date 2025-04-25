@@ -99,7 +99,8 @@ public class Main {
 				if (article == null) {
 					continue;
 				}
-				articles.remove(article);
+
+				articles.remove(article); // 검색한 게시글을 목록에서 삭제함
 
 				System.out.printf("%d번의 게시글이 삭제되었습니다.\n", article.id);
 
@@ -162,7 +163,8 @@ public class Main {
 	}
 
 	/**
-	 * 게시글 목록에서 입력받은 id값으로 검색 후 반환하는 함수
+	 * 게시글 목록에서 입력받은 id값으로 검색 후 반환하는 함수</br>
+	 * 입력받은 명령어에서 게시글 번호를 검색한다
 	 * 
 	 * @param articles = 게시글 목록
 	 * @param cmd      = 명령어
@@ -176,25 +178,25 @@ public class Main {
 
 			String[] _cmd = cmd.split(" ");
 
-			if (_cmd.length > 2) {
+			if (_cmd.length > 2) { // 명령어 뒤에 게시글 번호가 있으면
 				int id = Integer.parseInt(_cmd[2]);
 
-				for (Article item : articles) {
+				for (Article item : articles) { // 게시글 목록에서 번호가 동일한 게시글 검색
 					if (item.id == id) {
 						article = item;
-						break;
+						break; // 찾으면 for문 종료 다음코드 실행
 					}
 				}
 
-				if (article == null) {
+				if (article == null) { // 검색된 게시글이 없으면
 					System.out.println(Messages.noAticle);
 				}
 
-			} else {
+			} else { // 명령어 뒤에 게시글 번호가 입력이 안됐으면
 				System.out.println(Messages.noAticleIndex);
 			}
 
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException e) { // 입력된 게시글 번호가 숫자로 변환이 안되면 발생하는 예외처리
 			System.out.println("숫자형식의 게시글 번호를 입력해 주세요.");
 		} catch (Exception e) {
 			System.out.println("오류가 발했습니다. : " + e.toString());
@@ -219,8 +221,8 @@ public class Main {
 
 		if (article == null) { // 새로만들고 초기화
 			article = new Article(lastArticleId, title, body);
-		} else { // 입력받은값 수정
-			article.setArticle(title, body);
+		} else { // 입력받은값 재정의
+			article.updateArticle(title, body);
 		}
 
 		return article;
@@ -263,6 +265,7 @@ class Article {
 
 		// 현재 날짜/시간
 		LocalDateTime now = LocalDateTime.now(); // 현재 날짜/시간 출력
+		// 처음 게시글 등록할때 등록 날짜랑 수정 날짜를 동일하게 넣는다.
 		date = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
 		update = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
 	}
@@ -270,10 +273,10 @@ class Article {
 	/**
 	 * 게시글 수정하기위해 입려받은 제목과 내용을 재정의하고 수정날짜도 재정의한다.
 	 * 
-	 * @parma _title = 제목
+	 * @param _title = 제목
 	 * @param _body = 내용
 	 */
-	public void setArticle(String _title, String _body) {
+	public void updateArticle(String _title, String _body) {
 		title = _title;
 		body = _body;
 
@@ -283,9 +286,8 @@ class Article {
 }
 
 /**
- * <br>
  * 지금 보고 있는게 무엇인지 체크해주는 객체</br>
- * 게시글 목록에서 게시글 수정을 하도록 수정하면서 viewChk사용안됨. <br>
+ * 게시글 목록에서 게시글 수정을 하도록 수정하면서 viewChk사용안됨.</br>
  * 언젠가 사용할지도 모르니까 그냥 두겠음.</br>
  * 
  * @param listChk = '게시글 목록' 체크 여부

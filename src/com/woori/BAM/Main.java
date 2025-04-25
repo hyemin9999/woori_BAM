@@ -5,17 +5,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
 	/**
-	 * 존재하지않는 게시글 입니다.
+	 * 존재하는 게시글이 없습니다
 	 */
-	public static String notAticleTxt = "존재하지않는 게시글 입니다.";
+	public static String notAticleTxt = "존재하는 게시글이 없습니다.";
 	/**
-	 * 입력된 게시글 번호가 없습니다.
+	 * 올바른 게시글 번호를 입력 바랍니다.
 	 */
-	public static String notAticleIndex = "입력된 게시글 번호가 없습니다.";
+	public static String notAticleIndex = "올바른 게시글 번호를 입력 바랍니다.";
 
 	/**
 	 * 명령어 종류
@@ -44,7 +45,7 @@ public class Main {
 		// ArrayList<E> 는 implements(구현) List(interface)
 		List<Article> articles = new ArrayList<Article>();
 
-		int id = 0;// 등록된 게시글 번호
+		int lastArticleId = 0;// 등록된 게시글 번호
 		int selectId = 0; // 상세보기 게시글 번호
 
 		ItemCheck itemChk = new ItemCheck().setItemChk(false);
@@ -71,7 +72,6 @@ public class Main {
 				System.out.println("명령어를 입력해 주세요");
 
 				itemChk = itemChk.setItemChk(false);
-
 				continue;// 현재단계 중단 및 반복문 실행
 			}
 
@@ -81,11 +81,34 @@ public class Main {
 
 			if (itemChk.listChk == true && cmd.startsWith(Commands.detail.toString())) { // 게시글 항목을 보기
 
-				getItemPrint(cmd, articles, itemChk);
+				int id = articles.size() + 1; // 입력받은 게시글 번호가 게시글 목록의 갯수보다 클때 게시글 존재 하지않음을 처리하기 위한 변수
+
+				id = getId(cmd);
+
+				Article article = null;
+
+				if (id <= articles.size() && id != 0) { // 존재하는 게시글 여부 확인 : 입력받은 게시글번호가 게시글 목록보다 작거나 같은지 확인
+					// article은 articles.get() 을 통해 받은 객체를 재사용하기 위해 저장 용도로 사용됨
+					article = articles.get(id - 1); // 해당 인덱스의 게시글 가져오기. 인덱스는 입력된 번호 - 1
+				}
+
+				if (article == null) {
+					System.out.println(notAticleTxt);
+					continue;
+				}
+
+				System.out.printf("번호 : %d\n", article.id);
+				System.out.printf("날짜 : %s\n", article.update);
+				System.out.printf("제목 : %s\n", article.title);
+				System.out.printf("내용 : %s\n", article.body);
+
+				itemChk.setItemChk(false, true);
+
+				// getItemPrint(cmd, articles, itemChk);
 
 			} else if (itemChk.listChk == true && cmd.startsWith(Commands.delete.toString())) { // 게시글 삭제
-
-				getItemPrint(cmd, articles, itemChk);
+				
+				 getItemPrint(cmd, articles, itemChk);
 
 			} else if (itemChk.listChk == true && cmd.startsWith(Commands.edit.toString())) { // 게시글 수정
 				// 지금 선택된 게시글의 번호 필요
@@ -103,24 +126,32 @@ public class Main {
 					aitem.setArticle(title, body);
 
 					System.out.printf("%d번글이 수정되었습니다.\n", selectId);
-				}else {
+				} else {
+
 					System.out.println(notAticleTxt);
 				}
 			} else if (cmd.equals(Commands.list.toString())) {// 게시글 목록
 				// 게시글 목록이 없을때를 먼저 체크하는게 좋다.
-				if (articles.size() == 0) { // 게시글 목록이 없을때를 의미
-					System.out.println("존재하는 게시글이 없습니다.\n게시글 작성을 먼저 해주세요.");
-					itemChk = itemChk.setItemChk(false);
-				} else {
-					System.out.printf("%d개의 게시글이 있습니다.\n", articles.size());
-					System.out.println("번호	|	제목");
-					// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
-					for (int i = articles.size() - 1; i >= 0; i--) {
-						System.out.printf("%d	|	%s\n", articles.get(i).id, articles.get(i).title);
-					}
 
-					itemChk = itemChk.setItemChk(true, false);// 게시글 목록 확인 여부 체크 true : 체크함
+				int articlesCnt = articles.size();
+
+				if (articlesCnt == 0) { // 게시글 목록이 없을때를 의미
+					System.out.println(notAticleTxt);
+					itemChk = itemChk.setItemChk(false);
+
+					continue;
 				}
+
+				System.out.printf("%d개의 게시글이 있습니다.\n", articlesCnt);
+				System.out.println("번호	|	제목");
+				// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
+				for (int i = articlesCnt - 1; i >= 0; i--) {
+
+					Article article = articles.get(i);
+					System.out.printf("%d	|	%s\n", article.id, article.title);
+				}
+
+				itemChk = itemChk.setItemChk(true, false);// 게시글 목록 확인 여부 체크 true : 체크함
 
 			} else if (cmd.equals(Commands.write.toString())) { // 글 작성
 				System.out.printf("제목 : ");
@@ -128,10 +159,10 @@ public class Main {
 				System.out.printf("내용 : ");
 				String body = sc.nextLine();
 
-				Article aitem = new Article(++id, title, body); // 새성자 오버로딩을 통해 각 값을 생성자에 넘김
+				Article aitem = new Article(++lastArticleId, title, body); // 새성자 오버로딩을 통해 각 값을 생성자에 넘김
 				articles.add(aitem);
 
-				System.out.printf("%d번글이 생성되었습니다.\n", id);
+				System.out.printf("%d번글이 생성되었습니다.\n", lastArticleId);
 				itemChk = itemChk.setItemChk(false);// 게시글 확인여부 초기화 false : 체크안함
 			} else { // 아무거나 입력했을때를 의미
 				System.out.println("존재하지 않는 명령어 입니다.");
@@ -153,14 +184,14 @@ public class Main {
 	 */
 	public static void getItemPrint(String cmd, List<Article> articles, ItemCheck _itemChk) {
 
-		int num = articles.size() + 1; // 입력받은 게시글 번호가 게시글 목록의 갯수보다 클때 게시글 존재 하지않음을 처리하기 위한 변수
+		int id = articles.size() + 1; // 입력받은 게시글 번호가 게시글 목록의 갯수보다 클때 게시글 존재 하지않음을 처리하기 위한 변수
 		_itemChk.setItemChk(true, false);
 
-		num = getId(cmd);
+		id = getId(cmd);
 
-		if (num <= articles.size() && num != 0) { // 존재하는 게시글 여부 확인 : 입력받은 게시글번호가 게시글 목록보다 작거나 같은지 확인
+		if (id <= articles.size() && id != 0) { // 존재하는 게시글 여부 확인 : 입력받은 게시글번호가 게시글 목록보다 작거나 같은지 확인
 			// article은 articles.get() 을 통해 받은 객체를 재사용하기 위해 저장 용도로 사용됨
-			Article article = articles.get(num - 1); // 해당 인덱스의 게시글 가져오기. 인덱스는 입력된 번호 - 1
+			Article article = articles.get(id - 1); // 해당 인덱스의 게시글 가져오기. 인덱스는 입력된 번호 - 1
 
 			if (cmd.startsWith(Commands.detail.toString())) { // 게시글 보기일때
 				System.out.printf("번호 : %d\n", article.id);
@@ -171,9 +202,9 @@ public class Main {
 				_itemChk.setItemChk(false, true);
 
 			} else if (cmd.startsWith(Commands.delete.toString())) { // 게시글 삭제일때
-				articles.remove(num - 1);
+				articles.remove(id - 1);
 
-				System.out.printf("%d번의 게시글이 삭제되었습니다.\n", num);
+				System.out.printf("%d번의 게시글이 삭제되었습니다.\n", id);
 			}
 
 		} else {
@@ -189,25 +220,22 @@ public class Main {
 	public static int getId(String cmd) {
 		int id = 0;
 
-		if (cmd.startsWith(Commands.detail.toString())) { // 게시글 보기 (명령어 게시글 번호) 형식
-			if (isNumberic(cmd.replace(Commands.detail.toString(), "").trim())) {
-				id = Integer.parseInt(cmd.replace(Commands.detail.toString(), "").trim());
-			} else { // 번호입력이 안되어있을때
-				System.out.println(notAticleIndex);
+		String[] _cmd = cmd.split(" ");
+
+		// 게시글 보기/삭제/수정 중 하나면 입력된 값이 숫자인지 확인 후 게시글 번호 반환
+		if (_cmd.length > 2 && (cmd.startsWith(Commands.detail.toString()) || cmd.startsWith(Commands.delete.toString())
+				|| cmd.startsWith(Commands.edit.toString()))) {
+
+			if (_cmd[2] != null && isNumberic(_cmd[2])) {
+				id = Integer.parseInt(_cmd[2]);
 			}
-		} else if (cmd.startsWith(Commands.delete.toString())) { // 게시글 삭제 (명령어 게시글 번호) 형식
-			if (isNumberic(cmd.replace(Commands.delete.toString(), "").trim())) {
-				id = Integer.parseInt(cmd.replace(Commands.delete.toString(), "").trim());
-			} else { // 번호입력이 안되어있을때
-				System.out.println(notAticleIndex);
-			}
-		} else if (cmd.startsWith(Commands.edit.toString())) { // 게시글 수정 (명령어 게시글 번호) 형식
-			if (isNumberic(cmd.replace(Commands.edit.toString(), "").trim())) {
-				id = Integer.parseInt(cmd.replace(Commands.edit.toString(), "").trim());
-			} else { // 번호입력이 안되어있을때
-				System.out.println(notAticleIndex);
-			}
+//			else {
+//				System.out.println(notAticleIndex);
+//			}
 		}
+//		else {
+//			System.out.println(notAticleIndex);
+//		}
 
 		return id;
 	}

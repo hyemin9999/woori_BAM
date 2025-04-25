@@ -99,8 +99,8 @@ public class Main {
 				if (article == null) {
 					continue;
 				}
+				articles.remove(article);
 
-				articles.remove(article.id - 1);
 				System.out.printf("%d번의 게시글이 삭제되었습니다.\n", article.id);
 
 //				itemChk.setItemChk(false);

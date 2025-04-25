@@ -23,6 +23,18 @@ public class Main {
 		static String delete = "article delete";
 		/** 프로그램 종료 */
 		static String exit = "exit";
+
+		static boolean searchCommand(String cmd, String searchCmd) {
+
+			boolean isSearch = false;
+
+			if (searchCmd == cmd) {
+				isSearch = true;
+			}
+
+			return isSearch;
+		}
+
 	}
 
 	/** 출력할 메세지 종류 */
@@ -51,8 +63,8 @@ public class Main {
 		System.out.println("== 프로그램 시작 ==");
 
 		System.out.println("명령어 종류) " + Commands.list + " : 게시글 목록 \n" + Commands.write + " : 게시글 작성 \n"
-				+ Commands.detail + " 번호 : 입력한 번호의 게시글 상세보기\n" + Commands.edit + " 번호 : 입력한 번호의 게시글 수정\n"
-				+ Commands.delete + " 번호 : 입력한 번호의 게시글 삭제\n" + Commands.exit + " : 종료\n" + "게시글 번호는 숫자입력 바랍니다.\n");
+				+ Commands.detail + " 번호 : 게시글 상세보기\n" + Commands.edit + " 번호 : 게시글 수정\n" + Commands.delete
+				+ " 번호 : 게시글 삭제\n" + Commands.exit + " : 종료\n" + "게시글 번호는 숫자를 입력 바랍니다.\n");
 
 		Scanner sc = new Scanner(System.in);
 
@@ -164,7 +176,8 @@ public class Main {
 
 	/**
 	 * 게시글 목록에서 입력받은 id값으로 검색 후 반환하는 함수</br>
-	 * 입력받은 명령어에서 게시글 번호를 검색한다
+	 * 입력받은 명령어에서 게시글 번호를 검색한다</br>
+	 * 명령어 번호 형식일때 사용되는 함수
 	 * 
 	 * @param articles = 게시글 목록
 	 * @param cmd      = 명령어
@@ -178,7 +191,13 @@ public class Main {
 
 			String[] _cmd = cmd.split(" ");
 
+//			if (_cmd.length == 2) { // 명령어만 입력되었을때
+//
+//
+//			} else
+
 			if (_cmd.length > 2) { // 명령어 뒤에 게시글 번호가 있으면
+
 				int id = Integer.parseInt(_cmd[2]);
 
 				for (Article item : articles) { // 게시글 목록에서 번호가 동일한 게시글 검색
@@ -188,6 +207,22 @@ public class Main {
 					}
 				}
 
+				/*
+				 * // 인덱스를 통해 게시글을 검색하는방법 // 게시글을 삭제할때 List<E>의 remove 메서드는 index와 Object를 사용하는
+				 * 두가지 방식이 있다. // 아래의 포문은 index를 통한 remove 메서드를 사용할때 필요한작업.
+				 * 
+				 * int searchIndex = -1;// index의 경우 0부터 시작이므로 -1값을 줘서 검색한 index가 없다고 확인할수있다.
+				 * for (int i = 0; i < articles.size(); i++) { if (articles.get(i).id == id) {
+				 * 
+				 * searchIndex = i; break; } }
+				 * 
+				 * int forIndex = 0; // 향상된 for문은 index값을알수없으니 사용할 index 선언 및 초기화 index는 0부터 시작
+				 * for (Article item : articles) { if (item.id == id) { searchIndex = forIndex;
+				 * // 향상된 for문 중 검색한 게시글의 index값을 재정의 break; // 찾으면 for문 종료 다음코드 실행 }
+				 * forIndex++; // 게시글을 검색하지못하면 index증감처리. }
+				 * 
+				 * if (searchIndex == -1) { // 검색한 게시글이 없으면 }
+				 */
 				if (article == null) { // 검색된 게시글이 없으면
 					System.out.println(Messages.noAticle);
 				}
@@ -274,7 +309,7 @@ class Article {
 	 * 게시글 수정하기위해 입려받은 제목과 내용을 재정의하고 수정날짜도 재정의한다.
 	 * 
 	 * @param _title = 제목
-	 * @param _body = 내용
+	 * @param _body  = 내용
 	 */
 	public void updateArticle(String _title, String _body) {
 		title = _title;

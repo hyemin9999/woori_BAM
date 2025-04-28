@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Main {
 
 	/** 명령어 종류 */
-	public static class Commands {
+	public static class Commands { // static 특징, 학습내용을 기억하세요.
 		/** 게시글 목록 */
 		static String list = "article list";
 		/** 게시글 작성 */
@@ -70,7 +70,7 @@ public class Main {
 
 			if (cmd.startsWith(Commands.detail)) {// 게시글 상세보기
 
-				Article article = getArticle(articles, cmd);
+				Article article = getArticle(articles, cmd); // 중복되는 작업, 메소드 작업.
 
 				if (article == null) {
 					continue;
@@ -129,8 +129,8 @@ public class Main {
 				for (int i = articlesCnt - 1; i >= 0; i--) {
 
 					Article article = articles.get(i);
-					System.out.printf("%d	|	%s	|	%s	|	%s\n", article.id, article.title,
-							article.body, article.date);
+					System.out.printf("%d	|	%s	|	%s	|	%s\n", article.id, article.title, article.body,
+							article.date);
 				}
 
 			} else { // 명령어 외 다른것을 입력했을때
@@ -152,7 +152,7 @@ public class Main {
 	 * @param cmd      = 명령어
 	 * @return 검색한 게시글
 	 */
-	public static Article getArticle(List<Article> articles, String cmd) {
+	public static Article getArticle(List<Article> articles, String cmd) { // static 메소드 특징, 학습내용을 기억하세요.
 
 		Article article = null;
 

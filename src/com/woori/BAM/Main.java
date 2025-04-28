@@ -23,18 +23,6 @@ public class Main {
 		static String delete = "article delete";
 		/** 프로그램 종료 */
 		static String exit = "exit";
-
-		static boolean searchCommand(String cmd, String searchCmd) {
-
-			boolean isSearch = false;
-
-			if (searchCmd == cmd) {
-				isSearch = true;
-			}
-
-			return isSearch;
-		}
-
 	}
 
 	/** 출력할 메세지 종류 */
@@ -50,15 +38,12 @@ public class Main {
 	public static void main(String[] args) {
 
 		// 게시글 배열 변수 선언
-		// ArrayList 자료구조로 인덱스를 가지고 객체주는 제한이 없음.
+		// ArrayList 자료구조로 인덱스를 가지고 객체수는 제한이 없음.
 		// List<Article> ==> 인터페이스, articles객체 변수명
 		// ArrayList<E> 는 implements(구현) List(interface)
 		List<Article> articles = new ArrayList<Article>();
 
 		int lastArticleId = 0;// 등록된 게시글 번호
-//		int selectId = 0; // 상세보기 게시글 번호
-
-//		ItemCheck itemChk = new ItemCheck().setItemChk(false);
 
 		System.out.println("== 프로그램 시작 ==");
 
@@ -77,19 +62,13 @@ public class Main {
 				break; // while문 빠져나감 ==> 프로그램 종료
 			}
 
-			if (cmd.replace("	", "").replace(" ", "").length() == 0) {// 아무것도 입력 안했을때를 의미
-				System.out.println("명령어를 입력해 주세요");
+			if (cmd.replace("	", "").replace(" ", "").length() == 0) {// 입력된 값이 없을때, 공백과 탭키 없애기
 
-//				itemChk = itemChk.setItemChk(false);
-				continue;// 현재단계 중단 및 반복문 실행
+				System.out.println("명령어를 입력해 주세요");
+				continue;// 현재단계 중단 후 반복문 실행
 			}
 
-//			if (itemChk.viewChk == false) { // 게시글 보기 상태가 아니면 게시글 index초기화
-//				selectId = 0;
-//			}
-
-//			if (itemChk.listChk == true && cmd.startsWith(Commands.detail.toString())) { // 게시글 항목을 보기
-			if (cmd.startsWith(Commands.detail.toString())) {
+			if (cmd.startsWith(Commands.detail)) {// 게시글 상세보기
 
 				Article article = getArticle(articles, cmd);
 
@@ -101,10 +80,8 @@ public class Main {
 				System.out.printf("날짜 : %s\n", article.update);
 				System.out.printf("제목 : %s\n", article.title);
 				System.out.printf("내용 : %s\n", article.body);
-//				itemChk.setItemChk(false, true);
 
-//			} else if (itemChk.listChk == true && cmd.startsWith(Commands.delete.toString())) { // 게시글 삭제
-			} else if (cmd.startsWith(Commands.delete.toString())) {
+			} else if (cmd.startsWith(Commands.delete)) { // 게시글 삭제
 
 				Article article = getArticle(articles, cmd);
 
@@ -116,10 +93,7 @@ public class Main {
 
 				System.out.printf("%d번의 게시글이 삭제되었습니다.\n", article.id);
 
-//				itemChk.setItemChk(false);
-
-//			} else if (itemChk.listChk == true && cmd.startsWith(Commands.edit.toString())) { // 게시글 수정
-			} else if (cmd.startsWith(Commands.edit.toString())) {
+			} else if (cmd.startsWith(Commands.edit)) { // 게시글 수정
 
 				Article article = getArticle(articles, cmd);
 
@@ -129,31 +103,28 @@ public class Main {
 
 				// 입력받은 항목으로 게시글 재정의
 				article = setArticle(article, sc, 0);
-
 				System.out.printf("%d번글이 수정되었습니다.\n", article.id);
 
-//				itemChk.setItemChk(false);
-			} else if (cmd.equals(Commands.write.toString())) {
+			} else if (cmd.equals(Commands.write)) { // 게시글 작성
 
 				// 입력받은 항목으로 게시글 생성및 초기화
 				Article article = setArticle(null, sc, ++lastArticleId);
 				articles.add(article);
 				System.out.printf("%d번글이 생성되었습니다.\n", lastArticleId);
-//				itemChk = itemChk.setItemChk(false);// 게시글 확인여부 초기화 false : 체크안함
-			} else if (cmd.equals(Commands.list.toString())) {
-				// 게시글 목록이 없을때를 먼저 체크하는게 좋다.
 
+			} else if (cmd.equals(Commands.list)) { // 게시글 목록
+
+				// 게시글 목록이 없을때를 먼저 체크하는게 좋다.
 				int articlesCnt = articles.size();
 
 				if (articlesCnt == 0) { // 게시글 목록이 없을때를 의미
 					System.out.println(Messages.noAticle);
-//					itemChk = itemChk.setItemChk(false);
-
 					continue;
 				}
 
 				System.out.printf("%d개의 게시글이 있습니다.\n", articlesCnt);
 				System.out.println("번호	|	제목");
+
 				// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
 				for (int i = articlesCnt - 1; i >= 0; i--) {
 
@@ -161,16 +132,13 @@ public class Main {
 					System.out.printf("%d	|	%s\n", article.id, article.title);
 				}
 
-//				itemChk = itemChk.setItemChk(true, false);// 게시글 목록 확인 여부 체크 true : 체크함
-
-			} else { // 아무거나 입력했을때를 의미
+			} else { // 명령어 외 다른것을 입력했을때
 				System.out.println(Messages.wrongCmd);
-//				itemChk = itemChk.setItemChk(false);// 게시글 확인여부 초기화 false : 체크안함
 			}
 		}
 
-		System.out.println("== 프로그램 종료 ==");
 		sc.close();
+		System.out.println("== 프로그램 종료 ==");
 
 	}
 
@@ -191,12 +159,24 @@ public class Main {
 
 			String[] _cmd = cmd.split(" ");
 
-//			if (_cmd.length == 2) { // 명령어만 입력되었을때
-//
-//
-//			} else
+			if (_cmd.length == 2) { // 명령어만 입력되었을때
 
-			if (_cmd.length > 2) { // 명령어 뒤에 게시글 번호가 있으면
+				String tmp = null;
+
+				// 명령어 '번호' 형식일때 명령어* 식으로 뒤에 뭐가 있을때 문구처리
+				if (cmd.startsWith(Commands.detail)) {
+					tmp = cmd.replace(Commands.detail, "");
+				} else if (cmd.startsWith(Commands.delete)) {
+					tmp = cmd.replace(Commands.delete, "");
+
+				} else if (cmd.startsWith(Commands.edit)) {
+					tmp = cmd.replace(Commands.edit, "");
+				}
+
+				if (tmp.length() != 0) {
+					System.out.println(Messages.wrongCmd);
+				}
+			} else if (_cmd.length > 2) { // 명령어 뒤에 게시글 번호가 있으면
 
 				int id = Integer.parseInt(_cmd[2]);
 
@@ -207,22 +187,6 @@ public class Main {
 					}
 				}
 
-				/*
-				 * // 인덱스를 통해 게시글을 검색하는방법 // 게시글을 삭제할때 List<E>의 remove 메서드는 index와 Object를 사용하는
-				 * 두가지 방식이 있다. // 아래의 포문은 index를 통한 remove 메서드를 사용할때 필요한작업.
-				 * 
-				 * int searchIndex = -1;// index의 경우 0부터 시작이므로 -1값을 줘서 검색한 index가 없다고 확인할수있다.
-				 * for (int i = 0; i < articles.size(); i++) { if (articles.get(i).id == id) {
-				 * 
-				 * searchIndex = i; break; } }
-				 * 
-				 * int forIndex = 0; // 향상된 for문은 index값을알수없으니 사용할 index 선언 및 초기화 index는 0부터 시작
-				 * for (Article item : articles) { if (item.id == id) { searchIndex = forIndex;
-				 * // 향상된 for문 중 검색한 게시글의 index값을 재정의 break; // 찾으면 for문 종료 다음코드 실행 }
-				 * forIndex++; // 게시글을 검색하지못하면 index증감처리. }
-				 * 
-				 * if (searchIndex == -1) { // 검색한 게시글이 없으면 }
-				 */
 				if (article == null) { // 검색된 게시글이 없으면
 					System.out.println(Messages.noAticle);
 				}
@@ -262,13 +226,6 @@ public class Main {
 
 		return article;
 	}
-
-	/**
-	 * 입력된 게시글 번호가 숫자인지 체크하는 함수
-	 */
-//	public static boolean isNumberic(String str) {
-//		return str.matches("[+-]?\\d*(\\.\\d+)?");
-//	}
 }
 
 /**
@@ -317,43 +274,5 @@ class Article {
 
 		LocalDateTime now = LocalDateTime.now(); // 현재 날짜/시간 출력
 		update = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
-	}
-}
-
-/**
- * 지금 보고 있는게 무엇인지 체크해주는 객체</br>
- * 게시글 목록에서 게시글 수정을 하도록 수정하면서 viewChk사용안됨.</br>
- * 언젠가 사용할지도 모르니까 그냥 두겠음.</br>
- * 
- * @param listChk = '게시글 목록' 체크 여부
- * @param viewChk = '게시글 보기' 체크 여부
- */
-class ItemCheck {
-	/** 게시글 목록부분인지 체크하는 용도 */
-	boolean listChk = false;
-	/** 게시글 보기부분인지 체크하는 용도 */
-	boolean viewChk = false;
-
-	/**
-	 * 현재 상태가 목록인지 상세보기인지 설정하는 함수
-	 * 
-	 * @param _listChk = 목록 여부
-	 * @param _viewChk = 상세 여부
-	 */
-	public ItemCheck setItemChk(boolean _listChk, boolean _viewChk) {
-		listChk = _listChk;
-		viewChk = _viewChk;
-
-		return this;
-	}
-
-	/**
-	 * listChk 과 viewChk이 동일한 값으로 설정하는 함수
-	 */
-	public ItemCheck setItemChk(boolean _Chk) {
-		listChk = _Chk;
-		viewChk = _Chk;
-
-		return this;
 	}
 }

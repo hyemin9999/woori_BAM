@@ -123,13 +123,13 @@ public class Main {
 				}
 
 				System.out.printf("%d개의 게시글이 있습니다.\n", articlesCnt);
-				System.out.println("번호	|	제목");
+				System.out.println("번호	|	제목	|	내용");
 
 				// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
 				for (int i = articlesCnt - 1; i >= 0; i--) {
 
 					Article article = articles.get(i);
-					System.out.printf("%d	|	%s\n", article.id, article.title);
+					System.out.printf("%d	|	%s	|	%s\n", article.id, article.title, article.body);
 				}
 
 			} else { // 명령어 외 다른것을 입력했을때
@@ -182,7 +182,7 @@ public class Main {
 
 				for (Article item : articles) { // 게시글 목록에서 번호가 동일한 게시글 검색
 					if (item.id == id) {
-						article = item;
+						article = item; // article은 객체이기때문에 주소를 복사한다.
 						break; // 찾으면 for문 종료 다음코드 실행
 					}
 				}
@@ -220,7 +220,7 @@ public class Main {
 
 		if (article == null) { // 새로만들고 초기화
 			article = new Article(lastArticleId, title, body);
-		} else { // 입력받은값 재정의
+		} else { // 입력받은값 재정의 넘겨받은 article이객체이기 때문에 해당 객체의 정보를 수정하면, 목록에서도 수정이됨.
 			article.updateArticle(title, body);
 		}
 

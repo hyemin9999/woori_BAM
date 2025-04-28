@@ -123,13 +123,14 @@ public class Main {
 				}
 
 				System.out.printf("%d개의 게시글이 있습니다.\n", articlesCnt);
-				System.out.println("번호	|	제목	|	내용");
+				System.out.println("번호	|	제목	|	내용	|	날짜");
 
 				// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
 				for (int i = articlesCnt - 1; i >= 0; i--) {
 
 					Article article = articles.get(i);
-					System.out.printf("%d	|	%s	|	%s\n", article.id, article.title, article.body);
+					System.out.printf("%d	|	%s	|	%s	|	%s\n", article.id, article.title,
+							article.body, article.date);
 				}
 
 			} else { // 명령어 외 다른것을 입력했을때
@@ -256,10 +257,10 @@ class Article {
 		body = _body;
 
 		// 현재 날짜/시간
-		LocalDateTime now = LocalDateTime.now(); // 현재 날짜/시간 출력
+		LocalDateTime now = LocalDateTime.now(); // 현재 날짜/시간 출력 "yyyy-MM-dd HH:mm:ss.SSS"
 		// 처음 게시글 등록할때 등록 날짜랑 수정 날짜를 동일하게 넣는다.
-		date = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
-		update = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
+		date = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		update = date;
 	}
 
 	/**
@@ -273,6 +274,6 @@ class Article {
 		body = _body;
 
 		LocalDateTime now = LocalDateTime.now(); // 현재 날짜/시간 출력
-		update = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
+		update = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 	}
 }

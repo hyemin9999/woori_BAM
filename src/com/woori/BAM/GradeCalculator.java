@@ -34,6 +34,7 @@ public class GradeCalculator {
 			break;
 		}
 
+		sc.close();
 		System.out.printf("%s 학생의 점수는 %s 등급입니다.\n", name, grade);
 	}
 

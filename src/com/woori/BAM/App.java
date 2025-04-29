@@ -1,23 +1,62 @@
 package com.woori.BAM;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.woori.BAM.Main.Commands;
-import com.woori.BAM.Main.Messages;
 import com.woori.BAM.dto.Article;
 
 public class App {
 
-	static void run() {
-		// 프로그램 시작시 게시글 미리 생성.
-		makeTestData(5); // 중요--> 해당 메소드가 만들어지는 위치? static 메서드일수밖에 없는 이유?
+	/** 명령어 종류 */
+	public static class Commands { // static 특징, 학습내용을 기억하세요.
+		/** 게시글 목록 */
+		static String list = "article list";
+		/** 게시글 작성 */
+		static String write = "article write";
+		/** 게시글 보기 */
+		static String detail = "article detail";
+		/** 게시글 수정 */
+		static String edit = "article modify";
+		/** 게시글 삭제 */
+		static String delete = "article delete";
+		/** 프로그램 종료 */
+		static String exit = "exit";
+	}
+
+	/** 출력할 메세지 종류 */
+	public static class Messages {
+		/** 존재하는 게시글이 없습니다. */
+		static String noAticle = "존재하는 게시글이 없습니다.";
+		/** 게시글 번호를 입력해 주세요. */
+		static String noAticleIndex = "게시글 번호를 입력해 주세요.";
+		/** 존재하지 않는 명령어 입니다. */
+		static String wrongCmd = "존재하지 않는 명령어 입니다.";
+	}
+
+	// static을 제거하는 이유?
+	List<Article> articles;
+	int lastArticleId;
+
+	/**
+	 * 초기화 블럭을 대신할것이 필요하다 -> 생성자 필요<br/>
+	 * 생성자 초기화
+	 */
+	App() {
+		articles = new ArrayList<Article>();
+		lastArticleId = 0;
+	}
+
+	public void run() {
 
 		System.out.println("== 프로그램 시작 ==");
 
 		System.out.println("명령어 종류) " + Commands.list + " : 게시글 목록 \n" + Commands.write + " : 게시글 작성 \n"
 				+ Commands.detail + " 번호 : 게시글 상세보기\n" + Commands.edit + " 번호 : 게시글 수정\n" + Commands.delete
 				+ " 번호 : 게시글 삭제\n" + Commands.exit + " : 종료\n" + "게시글 번호는 숫자를 입력 바랍니다.\n");
+
+		// 프로그램 시작시 게시글 미리 생성.
+		makeTestData(5);
 
 		Scanner sc = new Scanner(System.in);
 
@@ -38,13 +77,13 @@ public class App {
 
 			if (cmd.startsWith(Commands.detail)) {// 게시글 상세보기
 
-				Article article = getArticle(Main.articles, cmd); // 중복되는 작업, 메소드 작업.
+				Article article = getArticle(articles, cmd);
 
 				if (article == null) {
 					continue;
 				}
 
-				article.increaseViewCnt(); // 상세보기일때 조회수를 1증가시키고 증가시킨 값을 출력해준다.
+				article.increaseViewCnt();
 
 				System.out.printf("번호 : %d\t조회수 : %d\n", article.getId(), article.getViewCnt());
 				System.out.printf("날짜 : %s\n", article.getUpdate());
@@ -53,19 +92,19 @@ public class App {
 
 			} else if (cmd.startsWith(Commands.delete)) { // 게시글 삭제
 
-				Article article = getArticle(Main.articles, cmd);
+				Article article = getArticle(articles, cmd);
 
 				if (article == null) {
 					continue;
 				}
 
-				Main.articles.remove(article); // 검색한 게시글을 목록에서 삭제함
+				articles.remove(article); // 검색한 게시글을 목록에서 삭제함
 
 				System.out.printf("%d번의 게시글이 삭제되었습니다.\n", article.getId());
 
 			} else if (cmd.startsWith(Commands.edit)) { // 게시글 수정
 
-				Article article = getArticle(Main.articles, cmd);
+				Article article = getArticle(articles, cmd);
 
 				if (article == null) {
 					continue;
@@ -77,30 +116,12 @@ public class App {
 
 			} else if (cmd.equals(Commands.write)) { // 게시글 작성
 
-				// 입력받은 항목으로 게시글 생성및 초기화
-				Main.articles.add(setArticle(null, sc, ++Main.lastArticleId));
-				System.out.printf("%d번글이 생성되었습니다.\n", Main.lastArticleId);
+				articles.add(setArticle(null, sc, ++lastArticleId));
+				System.out.printf("%d번글이 생성되었습니다.\n", lastArticleId);
 
 			} else if (cmd.equals(Commands.list)) { // 게시글 목록
 
-				// 게시글 목록이 없을때를 먼저 체크하는게 좋다.
-				int articlesCnt = Main.articles.size();
-
-				if (articlesCnt == 0) { // 게시글 목록이 없을때를 의미
-					System.out.println(Messages.noAticle);
-					continue;
-				}
-
-				System.out.printf("%d개의 게시글이 있습니다.\n", articlesCnt);
-				System.out.println("번호	|	제목	|	날짜			|	조회수");
-
-				// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
-				for (int i = articlesCnt - 1; i >= 0; i--) {
-
-					Article article = Main.articles.get(i);
-					System.out.printf("%d	|	%s	|	%s	|	%d\n", article.getId(), article.getTitle(),
-							article.getDate(), article.getViewCnt());
-				}
+				viewArticleList();
 
 			} else { // 명령어 외 다른것을 입력했을때
 				System.out.println(Messages.wrongCmd);
@@ -112,19 +133,40 @@ public class App {
 
 	}
 
+	/** 게시글 목록을 보여주는 함수 */
+	void viewArticleList() {
+		// 게시글 목록이 없을때를 먼저 체크하는게 좋다.
+		int articlesCnt = articles.size();
+
+		if (articlesCnt == 0) { // 게시글 목록이 없을때를 의미
+			System.out.println(Messages.noAticle);
+		} else {
+
+			System.out.printf("%d개의 게시글이 있습니다.\n", articlesCnt);
+			System.out.println("번호	|	제목	|	날짜			|	조회수");
+
+			// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
+			for (int i = articlesCnt - 1; i >= 0; i--) {
+
+				Article article = articles.get(i);
+				System.out.printf("%d	|	%s	|	%s	|	%d\n", article.getId(), article.getTitle(),
+						article.getDate(), article.getViewCnt());
+			}
+		}
+	}
+	
 	/**
 	 * 프로그램 시작시 게시글을 미리 만들어주는 함수
 	 * 
 	 * @param ArticleCnt = 미리 만들 게시글 갯수
 	 */
-	public static void makeTestData(int ArticleCnt) {
+	public void makeTestData(int ArticleCnt) {
 
-		// 3 --> 5개, 최적화(2단계->후위연산자 사용, 코드를 2줄을 한줄로) + 반복문 ==> 시작하자 마자 실행
-		// 넘겨받은 cnt개수만큼 게시글 미리 만들기
 		for (int i = 0; i < ArticleCnt; i++) {
-			Main.articles.add(new Article(++Main.lastArticleId, "제목" + Main.lastArticleId, "내용" + Main.lastArticleId,
-					Main.lastArticleId * 10));
+			articles.add(new Article(++lastArticleId, "제목" + lastArticleId, "내용" + lastArticleId, lastArticleId * 10));
 		}
+		
+//		viewArticleList();
 	}
 
 	/**
@@ -136,7 +178,7 @@ public class App {
 	 * @param cmd      = 명령어
 	 * @return 검색한 게시글
 	 */
-	public static Article getArticle(List<Article> articles, String cmd) { // static 메소드 특징, 학습내용을 기억하세요.
+	public Article getArticle(List<Article> articles, String cmd) { // static 메소드 특징, 학습내용을 기억하세요.
 
 		Article article = null;
 
@@ -197,7 +239,7 @@ public class App {
 	 * @param sc            = 입력용 Scanner 변수
 	 * @param lastArticleId = 글쓰기일때 게시글 마지막번호
 	 */
-	public static Article setArticle(Article article, Scanner sc, int lastArticleId) {
+	public Article setArticle(Article article, Scanner sc, int lastArticleId) {
 
 		System.out.printf("제목 : ");
 		String title = sc.nextLine();

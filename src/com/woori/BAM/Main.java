@@ -35,22 +35,27 @@ public class Main {
 		static String wrongCmd = "존재하지 않는 명령어 입니다.";
 	}
 
-	// static makeTestData() : 작업을 하면서 필요한 게시글목록과 게시글 번호를 static으로 선언.
+	/**
+	 * 게시글목록 (static makeTestData메서드에서 사용하기위해 static선언)
+	 */
+	static List<Article> articles;
+	/**
+	 * 게시글 생성시 사용될 게시글번호 (마지막번호) 초기값은 0
+	 */
+	static int lastArticleId;
 
-	/** 게시글목록 (static makeTestData메서드에서 사용하기위해 static선언) */
-	static List<Article> articles = new ArrayList<Article>();
-	/** 게시글 생성시 사용될 게시글번호 (마지막번호) 초기값은 0 */
-	static int lastArticleId = 0;
+	/**
+	 * static makeTestData()에서 사용할 변수들을 static으로 선언하였으나<br/>
+	 * static변수의 초기화는 static블록에서 해야 한다.
+	 */
+	static {
+		articles = new ArrayList<Article>();
+		lastArticleId = 0;
+	}
 
 	public static void main(String[] args) {
 
-		// 게시글 배열 변수 선언
-		// ArrayList 자료구조로 인덱스를 가지고 객체수는 제한이 없음.
-		// List<Article> ==> 인터페이스, articles객체 변수명
-		// ArrayList<E> 는 implements(구현) List(interface)
-//		List<Article> articles = new ArrayList<Article>();
-//
-//		// 프로그램 시작시 게시글 미리 생성.
+		// 프로그램 시작시 게시글 미리 생성.
 		makeTestData(5); // 중요--> 해당 메소드가 만들어지는 위치? static 메서드일수밖에 없는 이유?
 
 		System.out.println("== 프로그램 시작 ==");

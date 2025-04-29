@@ -78,8 +78,7 @@ public class Main {
 
 				article.viewCnt++; // 상세보기일때 조회수를 1증가시키고 증가시킨 값을 출력해준다.
 
-				System.out.printf("번호 : %d\n", article.id);
-				System.out.printf("조회수 : %d\n", article.viewCnt);
+				System.out.printf("번호 : %d\t조회수 : %d\n", article.id, article.viewCnt);
 				System.out.printf("날짜 : %s\n", article.update);
 				System.out.printf("제목 : %s\n", article.title);
 				System.out.printf("내용 : %s\n", article.body);
@@ -126,14 +125,14 @@ public class Main {
 				}
 
 				System.out.printf("%d개의 게시글이 있습니다.\n", articlesCnt);
-				System.out.println("번호	|	제목	|	내용	|	날짜	|	조회수");
+				System.out.println("번호	|	제목	|	날짜			|	조회수");
 
 				// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
 				for (int i = articlesCnt - 1; i >= 0; i--) {
 
 					Article article = articles.get(i);
-					System.out.printf("%d	|	%s	|	%s	|	%s	|	%d\n", article.id, article.title, article.body,
-							article.date, article.viewCnt);
+					System.out.printf("%d	|	%s	|	%s	|	%d\n", article.id, article.title, article.date,
+							article.viewCnt);
 				}
 
 			} else { // 명령어 외 다른것을 입력했을때
@@ -178,6 +177,8 @@ public class Main {
 
 				if (tmp.length() != 0) {
 					System.out.println(Messages.wrongCmd);
+				} else { // 명령어 뒤에 게시글 번호가 입력이 안됐으면
+					System.out.println(Messages.noAticleIndex);
 				}
 			} else if (_cmd.length > 2) { // 명령어 뒤에 게시글 번호가 있으면
 

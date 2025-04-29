@@ -156,8 +156,8 @@ public class Main {
 	/**
 	 * 프로그램 시작시 게시글을 미리 만들어주는 함수
 	 * 
-	 * @param ArticleCnt    = 미리 만들 게시글 갯수
-	 */	
+	 * @param ArticleCnt = 미리 만들 게시글 갯수
+	 */
 	public static void makeTestData(int ArticleCnt) {
 
 		// 3 --> 5개, 최적화(2단계->후위연산자 사용, 코드를 2줄을 한줄로) + 반복문 ==> 시작하자 마자 실행

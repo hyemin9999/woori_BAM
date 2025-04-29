@@ -35,15 +35,23 @@ public class Main {
 		static String wrongCmd = "존재하지 않는 명령어 입니다.";
 	}
 
+	// static makeTestData() : 작업을 하면서 필요한 게시글목록과 게시글 번호를 static으로 선언.
+
+	/** 게시글목록 (static makeTestData메서드에서 사용하기위해 static선언) */
+	static List<Article> articles = new ArrayList<Article>();
+	/** 게시글 생성시 사용될 게시글번호 (마지막번호) 초기값은 0 */
+	static int lastArticleId = 0;
+
 	public static void main(String[] args) {
 
 		// 게시글 배열 변수 선언
 		// ArrayList 자료구조로 인덱스를 가지고 객체수는 제한이 없음.
 		// List<Article> ==> 인터페이스, articles객체 변수명
 		// ArrayList<E> 는 implements(구현) List(interface)
-		List<Article> articles = new ArrayList<Article>();
-
-		int lastArticleId = 0;// 등록된 게시글 번호
+//		List<Article> articles = new ArrayList<Article>();
+//
+//		// 프로그램 시작시 게시글 미리 생성.
+		makeTestData(5); // 중요--> 해당 메소드가 만들어지는 위치? static 메서드일수밖에 없는 이유?
 
 		System.out.println("== 프로그램 시작 ==");
 
@@ -146,6 +154,24 @@ public class Main {
 	}
 
 	/**
+	 * 프로그램 시작시 게시글을 미리 만들어주는 함수
+	 * 
+	 * @param articles      = 게시글 목록
+	 * @param ArticleCnt    = 미리 만들 게시글 갯수
+	 * @param lastArticleId = 게시글 생성시 사용되는 번호
+	 * @return lastArticleId = 미리 목록 만들고 그뒤에 번호가 연결되서 게시글 생성되도록 id값 반환
+	 */
+//	public static int makeTestData(List<Article> articles, int ArticleCnt, int lastArticleId) {
+	public static void makeTestData(int ArticleCnt) {
+
+		// 3 --> 5개, 최적화(2단계->후위연산자 사용, 코드를 2줄을 한줄로) + 반복문 ==> 시작하자 마자 실행
+		// 넘겨받은 cnt개수만큼 게시글 미리 만들기
+		for (int i = 0; i < ArticleCnt; i++) {
+			articles.add(new Article(++lastArticleId, "제목" + lastArticleId, "내용" + lastArticleId, lastArticleId * 10));
+		}
+	}
+
+	/**
 	 * 게시글 목록에서 입력받은 id값으로 검색 후 반환하는 함수</br>
 	 * 입력받은 명령어에서 게시글 번호를 검색한다</br>
 	 * 명령어 번호 형식일때 사용되는 함수
@@ -223,7 +249,7 @@ public class Main {
 		String body = sc.nextLine();
 
 		if (article == null) { // 새로만들고 초기화
-			article = new Article(lastArticleId, title, body);
+			article = new Article(lastArticleId, title, body, 0);
 		} else { // 입력받은값 재정의 넘겨받은 article이객체이기 때문에 해당 객체의 정보를 수정하면, 목록에서도 수정이됨.
 			article.updateArticle(title, body);
 		}
@@ -252,20 +278,19 @@ class Article {
 	/**
 	 * 게시글 생성자
 	 * 
-	 * @param _id    = 번호
-	 * @param _title = 제목
-	 * @param _body  = 내용
+	 * @param _id      = 번호
+	 * @param _title   = 제목
+	 * @param _body    = 내용
+	 * @param _viewCnt = 조회수
 	 */
-	Article(int _id, String _title, String _body) {
+	Article(int _id, String _title, String _body, int _viewCnt) {
 		id = _id;
 		title = _title;
 		body = _body;
-		viewCnt = 0;
+		viewCnt = _viewCnt;
 
-		// 현재 날짜/시간
-		LocalDateTime now = LocalDateTime.now(); // 현재 날짜/시간 출력 "yyyy-MM-dd HH:mm:ss.SSS"
 		// 처음 게시글 등록할때 등록 날짜랑 수정 날짜를 동일하게 넣는다.
-		date = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		date = Util.getDateTimeStr();
 		update = date;
 	}
 
@@ -279,7 +304,16 @@ class Article {
 		title = _title;
 		body = _body;
 
-		LocalDateTime now = LocalDateTime.now(); // 현재 날짜/시간 출력
-		update = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		update = Util.getDateTimeStr();
+	}
+}
+
+class Util {
+	/**
+	 * 현재 날짜 시간을 반환하는 함수
+	 */
+	public static String getDateTimeStr() {
+		LocalDateTime now = LocalDateTime.now(); // 현재 날짜/시간 출력 "yyyy-MM-dd HH:mm:ss.SSS"
+		return now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 	}
 }

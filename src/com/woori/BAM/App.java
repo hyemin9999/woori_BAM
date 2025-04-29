@@ -1,61 +1,15 @@
 package com.woori.BAM;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.woori.BAM.dto.*;
+import com.woori.BAM.Main.Commands;
+import com.woori.BAM.Main.Messages;
+import com.woori.BAM.dto.Article;
 
-public class Main {
+public class App {
 
-	/** 명령어 종류 */
-	public static class Commands { // static 특징, 학습내용을 기억하세요.
-		/** 게시글 목록 */
-		static String list = "article list";
-		/** 게시글 작성 */
-		static String write = "article write";
-		/** 게시글 보기 */
-		static String detail = "article detail";
-		/** 게시글 수정 */
-		static String edit = "article modify";
-		/** 게시글 삭제 */
-		static String delete = "article delete";
-		/** 프로그램 종료 */
-		static String exit = "exit";
-	}
-
-	/** 출력할 메세지 종류 */
-	public static class Messages {
-		/** 존재하는 게시글이 없습니다. */
-		static String noAticle = "존재하는 게시글이 없습니다.";
-		/** 게시글 번호를 입력해 주세요. */
-		static String noAticleIndex = "게시글 번호를 입력해 주세요.";
-		/** 존재하지 않는 명령어 입니다. */
-		static String wrongCmd = "존재하지 않는 명령어 입니다.";
-	}
-
-	/**
-	 * 게시글목록 (static makeTestData메서드에서 사용하기위해 static선언)
-	 */
-	static List<Article> articles;
-	/**
-	 * 게시글 생성시 사용될 게시글번호 (마지막번호) 초기값은 0
-	 */
-	static int lastArticleId;
-
-	/**
-	 * static makeTestData()에서 사용할 변수들을 static으로 선언하였으나<br/>
-	 * static변수의 초기화는 static블록에서 해야 한다.
-	 */
-	static {
-		articles = new ArrayList<Article>();
-		lastArticleId = 0;
-	}
-
-	public static void main(String[] args) {
-		
-//		App.run();
-
+	static void run() {
 		// 프로그램 시작시 게시글 미리 생성.
 		makeTestData(5); // 중요--> 해당 메소드가 만들어지는 위치? static 메서드일수밖에 없는 이유?
 
@@ -84,7 +38,7 @@ public class Main {
 
 			if (cmd.startsWith(Commands.detail)) {// 게시글 상세보기
 
-				Article article = getArticle(articles, cmd); // 중복되는 작업, 메소드 작업.
+				Article article = getArticle(Main.articles, cmd); // 중복되는 작업, 메소드 작업.
 
 				if (article == null) {
 					continue;
@@ -99,19 +53,19 @@ public class Main {
 
 			} else if (cmd.startsWith(Commands.delete)) { // 게시글 삭제
 
-				Article article = getArticle(articles, cmd);
+				Article article = getArticle(Main.articles, cmd);
 
 				if (article == null) {
 					continue;
 				}
 
-				articles.remove(article); // 검색한 게시글을 목록에서 삭제함
+				Main.articles.remove(article); // 검색한 게시글을 목록에서 삭제함
 
 				System.out.printf("%d번의 게시글이 삭제되었습니다.\n", article.getId());
 
 			} else if (cmd.startsWith(Commands.edit)) { // 게시글 수정
 
-				Article article = getArticle(articles, cmd);
+				Article article = getArticle(Main.articles, cmd);
 
 				if (article == null) {
 					continue;
@@ -124,14 +78,13 @@ public class Main {
 			} else if (cmd.equals(Commands.write)) { // 게시글 작성
 
 				// 입력받은 항목으로 게시글 생성및 초기화
-				Article article = setArticle(null, sc, ++lastArticleId);
-				articles.add(article);
-				System.out.printf("%d번글이 생성되었습니다.\n", lastArticleId);
+				Main.articles.add(setArticle(null, sc, ++Main.lastArticleId));
+				System.out.printf("%d번글이 생성되었습니다.\n", Main.lastArticleId);
 
 			} else if (cmd.equals(Commands.list)) { // 게시글 목록
 
 				// 게시글 목록이 없을때를 먼저 체크하는게 좋다.
-				int articlesCnt = articles.size();
+				int articlesCnt = Main.articles.size();
 
 				if (articlesCnt == 0) { // 게시글 목록이 없을때를 의미
 					System.out.println(Messages.noAticle);
@@ -144,7 +97,7 @@ public class Main {
 				// 저장된 게시글 목록 출력 ==> 최신글이 상단에 위치하도록 역순
 				for (int i = articlesCnt - 1; i >= 0; i--) {
 
-					Article article = articles.get(i);
+					Article article = Main.articles.get(i);
 					System.out.printf("%d	|	%s	|	%s	|	%d\n", article.getId(), article.getTitle(),
 							article.getDate(), article.getViewCnt());
 				}
@@ -169,7 +122,8 @@ public class Main {
 		// 3 --> 5개, 최적화(2단계->후위연산자 사용, 코드를 2줄을 한줄로) + 반복문 ==> 시작하자 마자 실행
 		// 넘겨받은 cnt개수만큼 게시글 미리 만들기
 		for (int i = 0; i < ArticleCnt; i++) {
-			articles.add(new Article(++lastArticleId, "제목" + lastArticleId, "내용" + lastArticleId, lastArticleId * 10));
+			Main.articles.add(new Article(++Main.lastArticleId, "제목" + Main.lastArticleId, "내용" + Main.lastArticleId,
+					Main.lastArticleId * 10));
 		}
 	}
 

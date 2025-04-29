@@ -156,12 +156,8 @@ public class Main {
 	/**
 	 * 프로그램 시작시 게시글을 미리 만들어주는 함수
 	 * 
-	 * @param articles      = 게시글 목록
 	 * @param ArticleCnt    = 미리 만들 게시글 갯수
-	 * @param lastArticleId = 게시글 생성시 사용되는 번호
-	 * @return lastArticleId = 미리 목록 만들고 그뒤에 번호가 연결되서 게시글 생성되도록 id값 반환
-	 */
-//	public static int makeTestData(List<Article> articles, int ArticleCnt, int lastArticleId) {
+	 */	
 	public static void makeTestData(int ArticleCnt) {
 
 		// 3 --> 5개, 최적화(2단계->후위연산자 사용, 코드를 2줄을 한줄로) + 반복문 ==> 시작하자 마자 실행

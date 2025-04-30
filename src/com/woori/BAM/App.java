@@ -34,16 +34,16 @@ public class App {
 		static String wrongCmd = "존재하지 않는 명령어 입니다.";
 	}
 
-	// static을 제거하는 이유?
-	List<Article> articles;
+	// 전역변수 == this (자기자신을 의미, 객체)
+	List<Article> articles; // List 타입의 articles ***
 	int lastArticleId;
 
 	/**
 	 * 초기화 블럭을 대신할것이 필요하다 -> 생성자 필요<br/>
-	 * 생성자 초기화
+	 * 생성자에서 초기화. 기존 code(static 제거 한 상태)
 	 */
 	App() {
-		articles = new ArrayList<Article>();
+		articles = new ArrayList<Article>(); // 데이터의 구조는 ArrayList형태로 객체가 생성
 		lastArticleId = 0;
 	}
 
@@ -55,8 +55,7 @@ public class App {
 				+ Commands.detail + " 번호 : 게시글 상세보기\n" + Commands.edit + " 번호 : 게시글 수정\n" + Commands.delete
 				+ " 번호 : 게시글 삭제\n" + Commands.exit + " : 종료\n" + "게시글 번호는 숫자를 입력 바랍니다.\n");
 
-		// 프로그램 시작시 게시글 미리 생성.
-		makeTestData(5);
+		makeTestData(5);// 프로그램 시작시 게시글 미리 생성.
 
 		Scanner sc = new Scanner(System.in);
 
@@ -154,7 +153,7 @@ public class App {
 			}
 		}
 	}
-	
+
 	/**
 	 * 프로그램 시작시 게시글을 미리 만들어주는 함수
 	 * 
@@ -165,7 +164,7 @@ public class App {
 		for (int i = 0; i < ArticleCnt; i++) {
 			articles.add(new Article(++lastArticleId, "제목" + lastArticleId, "내용" + lastArticleId, lastArticleId * 10));
 		}
-		
+
 //		viewArticleList();
 	}
 

@@ -9,7 +9,7 @@ import com.woori.BAM.dto.Article;
 public class App {
 
 	/** 명령어 종류 */
-	public static class Commands { // static 특징, 학습내용을 기억하세요.
+	private static class Commands { // static 특징, 학습내용을 기억하세요.
 		/** 게시글 목록 */
 		static String list = "article list";
 		/** 게시글 작성 */
@@ -25,7 +25,7 @@ public class App {
 	}
 
 	/** 출력할 메세지 종류 */
-	public static class Messages {
+	private static class Messages {
 		/** 존재하는 게시글이 없습니다. */
 		static String noAticle = "존재하는 게시글이 없습니다.";
 		/** 게시글 번호를 입력해 주세요. */
@@ -35,8 +35,11 @@ public class App {
 	}
 
 	// 전역변수 == this (자기자신을 의미, 객체)
-	List<Article> articles; // List 타입의 articles ***
-	int lastArticleId;
+	private List<Article> articles; // List 타입의 articles ***
+	private int lastArticleId;
+
+	// 상단의 전역변수들은 같은 클래스내에서 사용하기때문에 private사용
+	// (default)여도 가능한 이유는 같은 패키지에서 사용가능하기때문에
 
 	/**
 	 * 초기화 블럭을 대신할것이 필요하다 -> 생성자 필요<br/>
@@ -47,6 +50,10 @@ public class App {
 		lastArticleId = 0;
 	}
 
+	// Main클래스의 main메서드에서 App클래스의 run()메서드를 호출하려면
+	// 접근제어자는 private 제외 다 사용가능 ==> private : 다른 클래스에서 호출불가.
+//	protected void run() { // protected : 같은 패키지 or 자식 클래스
+//	void run() { // (default) : 같은 패키지에서만 가능
 	public void run() {
 
 		System.out.println("== 프로그램 시작 ==");
@@ -76,7 +83,7 @@ public class App {
 
 			if (cmd.startsWith(Commands.detail)) {// 게시글 상세보기
 
-				Article article = getArticle(articles, cmd);
+				Article article = getArticle(cmd);
 
 				if (article == null) {
 					continue;
@@ -91,7 +98,7 @@ public class App {
 
 			} else if (cmd.startsWith(Commands.delete)) { // 게시글 삭제
 
-				Article article = getArticle(articles, cmd);
+				Article article = getArticle(cmd);
 
 				if (article == null) {
 					continue;
@@ -103,19 +110,19 @@ public class App {
 
 			} else if (cmd.startsWith(Commands.edit)) { // 게시글 수정
 
-				Article article = getArticle(articles, cmd);
+				Article article = getArticle(cmd);
 
 				if (article == null) {
 					continue;
 				}
 
 				// 입력받은 항목으로 게시글 재정의
-				article = setArticle(article, sc, 0);
+				article = setArticle(article, sc);
 				System.out.printf("%d번글이 수정되었습니다.\n", article.getId());
 
 			} else if (cmd.equals(Commands.write)) { // 게시글 작성
 
-				articles.add(setArticle(null, sc, ++lastArticleId));
+				articles.add(setArticle(null, sc));
 				System.out.printf("%d번글이 생성되었습니다.\n", lastArticleId);
 
 			} else if (cmd.equals(Commands.list)) { // 게시글 목록
@@ -132,8 +139,12 @@ public class App {
 
 	}
 
+	// 이 밑에 함수들은 같은 클래스내 메서드에서 호출하는 메서드들이라서
+	// 접근제어자 4개다 사용가능 하지만 같은 클래스 내에서만 호출되는 메서드들이므로
+	// 이클립스 퀵픽스에서는 private로 생성해준다.
+
 	/** 게시글 목록을 보여주는 함수 */
-	void viewArticleList() {
+	public void viewArticleList() {
 		// 게시글 목록이 없을때를 먼저 체크하는게 좋다.
 		int articlesCnt = articles.size();
 
@@ -159,7 +170,7 @@ public class App {
 	 * 
 	 * @param ArticleCnt = 미리 만들 게시글 갯수
 	 */
-	public void makeTestData(int ArticleCnt) {
+	private void makeTestData(int ArticleCnt) {
 
 		for (int i = 0; i < ArticleCnt; i++) {
 			articles.add(new Article(++lastArticleId, "제목" + lastArticleId, "내용" + lastArticleId, lastArticleId * 10));
@@ -177,7 +188,7 @@ public class App {
 	 * @param cmd      = 명령어
 	 * @return 검색한 게시글
 	 */
-	public Article getArticle(List<Article> articles, String cmd) { // static 메소드 특징, 학습내용을 기억하세요.
+	Article getArticle(String cmd) { // static 메소드 특징, 학습내용을 기억하세요.
 
 		Article article = null;
 
@@ -238,8 +249,7 @@ public class App {
 	 * @param sc            = 입력용 Scanner 변수
 	 * @param lastArticleId = 글쓰기일때 게시글 마지막번호
 	 */
-	public Article setArticle(Article article, Scanner sc, int lastArticleId) {
-
+	protected Article setArticle(Article article, Scanner sc) {
 		System.out.printf("제목 : ");
 		String title = sc.nextLine();
 		System.out.printf("내용 : ");

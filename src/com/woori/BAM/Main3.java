@@ -1,4 +1,5 @@
 package com.woori.BAM;
+
 import java.util.Scanner; //Scanner사용을 위한 import
 
 public class Main3 {
@@ -22,6 +23,7 @@ public class Main3 {
 		for (int i = 0; i < count; i++) {
 			System.out.printf("%d 번째 학생의 이름을 입력해주세요 : ", i + 1); // for문에서 i가 0부터 시작하므로 출력되는 값은 i+1로 처리
 			String name = sc.next(); // 입력받은 학생이 이름을 저장할 변수
+
 			System.out.printf("%d 번째 학생의 점수를 입력해주세요 : ", i + 1); // for문에서 i가 0부터 시작하므로 출력되는 값은 i+1로 처리
 			int score = sc.nextInt(); // 입력받은 학생의 점수를 저장할 변수
 
